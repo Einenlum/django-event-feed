@@ -13,3 +13,4 @@ Registered users can also get the detail of an event and see who is attending it
 * pytest
 * drf-yasg (to generate documentation)
 * django-guardian (to use object permissions)
+* black (opinonated linter)
