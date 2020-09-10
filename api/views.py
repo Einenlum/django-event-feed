@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import (
@@ -15,6 +16,7 @@ from .serializers import EventSerializer, CreateEventSerializer
 class EventCollectionAPIView(ListCreateAPIView):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -26,3 +28,4 @@ class EventCollectionAPIView(ListCreateAPIView):
 class EventResourceAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
+    permission_classes = [IsAuthenticated]

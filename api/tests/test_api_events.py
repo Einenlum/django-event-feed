@@ -22,16 +22,37 @@ def create_event():
     return event
 
 
+def authenticate_as(client, username, password):
+    token = client.post(
+        "/auth/authenticate/", {"username": "pierre", "password": "password"}
+    ).data["token"]
+
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+
 @pytest.mark.django_db
 def test_events_collection_api(api_client):
-    roger = create_user("roger")
-    france = create_country("France")
-    paris = create_city(france, "Paris")
-
     # No events so far
     response = api_client.get("/events/")
     assert response.status_code == 200
     assert response.data == []
+
+    event = create_event()
+
+    # Get all collection again
+    response = api_client.get("/events/")
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == event.title
+    assert response.data[0]["attendees"] == [1]
+
+
+@pytest.mark.django_db
+def test_events_post_to_collection_api(api_client):
+    pierre = create_user("pierre", "password")
+    france = create_country("France")
+    paris = create_city(france, "Paris")
+    authenticate_as(api_client, "pierre", "password")
 
     # Event creation
     response = api_client.post(
@@ -41,7 +62,7 @@ def test_events_collection_api(api_client):
             "description": "Some description",
             "location": "Some location",
             "city": paris.pk,
-            "author": roger.pk,
+            "author": pierre.pk,
             "start_date": timezone.now(),
             "end_date": timezone.now(),
         },
@@ -53,12 +74,14 @@ def test_events_collection_api(api_client):
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]["title"] == "Some title"
-    assert response.data[0]["attendees"] == [roger.pk]
+    assert response.data[0]["attendees"] == [pierre.pk]
 
 
 @pytest.mark.django_db
 def test_events_get_api(api_client):
     event = create_event()
+    pierre = create_user("pierre", "password")
+    authenticate_as(api_client, "pierre", "password")
 
     response = api_client.get(f"/events/{event.pk}/")
     assert response.status_code == 200
@@ -68,6 +91,8 @@ def test_events_get_api(api_client):
 @pytest.mark.django_db
 def test_events_patch_api(api_client):
     event = create_event()
+    pierre = create_user("pierre", "password")
+    authenticate_as(api_client, "pierre", "password")
 
     response = api_client.patch(f"/events/{event.pk}/", {"title": "A new shiny title"})
     assert response.status_code == 200
@@ -77,9 +102,10 @@ def test_events_patch_api(api_client):
 @pytest.mark.django_db
 def test_events_put_api(api_client):
     event = create_event()
-    pierre = create_user("pierre")
+    pierre = create_user("pierre", "password")
     germany = create_country("Germany")
     berlin = create_city(germany, "Berlin")
+    authenticate_as(api_client, "pierre", "password")
 
     response = api_client.put(
         f"/events/{event.pk}/",
@@ -101,6 +127,9 @@ def test_events_put_api(api_client):
 @pytest.mark.django_db
 def test_events_delete_api(api_client):
     event = create_event()
+    pierre = create_user("pierre", "password")
+    authenticate_as(api_client, "pierre", "password")
+
     response = api_client.delete(f"/events/{event.pk}/")
     assert response.status_code == 204
     response = api_client.get("/events/")

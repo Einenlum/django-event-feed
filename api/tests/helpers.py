@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from api.models import Country, City, Event
 
 
-def create_user(username):
-    return User.objects.create_user(username)
+def create_user(username, password=None):
+    return User.objects.create_user(username, password=password)
 
 
 def create_country(name):
