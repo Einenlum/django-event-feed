@@ -2,6 +2,12 @@ from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
 from django.dispatch import receiver
+from guardian.shortcuts import assign_perm
+from eventfeed import settings
+from .custom_permissions import (
+    EVENT_PERMISSION_DELETE_OWN_EVENT,
+    EVENT_PERMISSION_EDIT_OWN_EVENT,
+)
 
 
 class Profile(models.Model):
@@ -52,6 +58,12 @@ class Event(models.Model):
     city = models.ForeignKey(City, models.CASCADE, blank=False)
     canceled = models.BooleanField(default=False)
 
+    class Meta:
+        permissions = (
+            (EVENT_PERMISSION_EDIT_OWN_EVENT, "Edit Event"),
+            (EVENT_PERMISSION_DELETE_OWN_EVENT, "Delete Event"),
+        )
+
     def __str__(self):
         return self.title
 
@@ -66,3 +78,13 @@ def event_author_is_automatically_an_attendee(sender, instance, created, **kwarg
     event = instance
     event.attendees.add(event.author)
     event.save()
+
+
+@receiver(post_save, sender=Event, dispatch_uid="set_permissions_to_author_of_events")
+def set_permissions_to_author_of_events(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    event = instance
+    assign_perm(EVENT_PERMISSION_EDIT_OWN_EVENT, event.author.user, event)
+    assign_perm(EVENT_PERMISSION_DELETE_OWN_EVENT, event.author.user, event)

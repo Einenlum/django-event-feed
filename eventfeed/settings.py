@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
+    "guardian",
 ]
 
 MIDDLEWARE = [
@@ -129,8 +130,16 @@ REST_FRAMEWORK = {
     ]
 }
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",  # this is default
+    "guardian.backends.ObjectPermissionBackend",
+)
+
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     }
 }
+
+# https://django-guardian.readthedocs.io/en/stable/configuration.html?highlight=ANONYMOUS_USER_NAME#anonymous-user-name
+ANONYMOUS_USER_NAME = None

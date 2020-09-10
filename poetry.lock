@@ -139,6 +139,17 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 category = "main"
+description = "Implementation of per object permissions for Django."
+name = "django-guardian"
+optional = false
+python-versions = ">=3.5"
+version = "2.3.0"
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
+category = "main"
 description = "Web APIs for Django, made easy."
 name = "djangorestframework"
 optional = false
@@ -447,7 +458,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "2d53fffe18ba17f41f917c8b48ecb65f8537938ebe2fea86b7792f3aa1209823"
+content-hash = "656bb9ea2505d22b663ca14dcbacde213bfd06f4bf1affccba3ff3c0e3d68ff7"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -498,6 +509,10 @@ coreschema = [
 django = [
     {file = "Django-3.1.1-py3-none-any.whl", hash = "sha256:b5fbb818e751f660fa2d576d9f40c34a4c615c8b48dd383f5216e609f383371f"},
     {file = "Django-3.1.1.tar.gz", hash = "sha256:59c8125ca873ed3bdae9c12b146fbbd6ed8d0f743e4cf5f5817af50c51f1fc2f"},
+]
+django-guardian = [
+    {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},
+    {file = "django_guardian-2.3.0-py3-none-any.whl", hash = "sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.11.1-py3-none-any.whl", hash = "sha256:8b1ac62c581dbc5799b03e535854b92fc4053ecfe74bad3f9c05782063d4196b"},

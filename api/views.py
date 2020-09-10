@@ -11,6 +11,7 @@ from rest_framework.generics import (
 from django.http import HttpResponse
 from .models import Event
 from .serializers import EventSerializer, CreateEventSerializer
+from .custom_permissions import EventObjectPermission
 
 
 class EventCollectionAPIView(ListCreateAPIView):
@@ -28,4 +29,4 @@ class EventCollectionAPIView(ListCreateAPIView):
 class EventResourceAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EventObjectPermission]

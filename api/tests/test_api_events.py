@@ -5,12 +5,13 @@ from api.models import Event
 from api.tests.helpers import create_city, create_user, create_country
 
 
-def create_event():
-    roger = create_user("roger")
+def create_event(profile=None):
+    if not profile:
+        profile = create_user("roger", "password").profile
     france = create_country("France")
     paris = create_city(france, "Paris")
     event = Event.objects.create(
-        author=roger.profile,
+        author=profile,
         city=paris,
         location="Under the Eiffer Tower",
         start_date=timezone.now(),
@@ -24,7 +25,7 @@ def create_event():
 
 def authenticate_as(client, username, password):
     token = client.post(
-        "/auth/authenticate/", {"username": "pierre", "password": "password"}
+        "/auth/authenticate/", {"username": username, "password": password}
     ).data["token"]
 
     client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
@@ -48,7 +49,7 @@ def test_events_collection_api(api_client):
 
 
 @pytest.mark.django_db
-def test_events_post_to_collection_api(api_client):
+def test_an_authenticated_user_can_create_an_event(api_client):
     pierre = create_user("pierre", "password")
     france = create_country("France")
     paris = create_city(france, "Paris")
@@ -78,7 +79,24 @@ def test_events_post_to_collection_api(api_client):
 
 
 @pytest.mark.django_db
-def test_events_get_api(api_client):
+def test_an_anonymous_user_cannot_create_an_event(api_client):
+    response = api_client.post(
+        "/events/",
+        {
+            "title": "Some title",
+            "description": "Some description",
+            "location": "Some location",
+            "city": 1,
+            "author": 1,
+            "start_date": timezone.now(),
+            "end_date": timezone.now(),
+        },
+    )
+    assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_an_authenticated_user_can_see_the_detail_of_an_event(api_client):
     event = create_event()
     pierre = create_user("pierre", "password")
     authenticate_as(api_client, "pierre", "password")
@@ -89,20 +107,33 @@ def test_events_get_api(api_client):
 
 
 @pytest.mark.django_db
-def test_events_patch_api(api_client):
+def test_an_anonymous_user_cannot_see_the_detail_of_an_event(api_client):
     event = create_event()
-    pierre = create_user("pierre", "password")
-    authenticate_as(api_client, "pierre", "password")
+
+    response = api_client.get(f"/events/{event.pk}/")
+    assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_only_the_author_of_an_event_can_edit_a_piece_of_information(api_client):
+    some_user = create_user("john", "password")
+    event = create_event(some_user.profile)
+    authenticate_as(api_client, "john", "password")
 
     response = api_client.patch(f"/events/{event.pk}/", {"title": "A new shiny title"})
     assert response.status_code == 200
     assert response.data["title"] == "A new shiny title"
 
+    some_other_user = create_user("rico", "password")
+    authenticate_as(api_client, "rico", "password")
+    response = api_client.patch(f"/events/{event.pk}/", {"title": "You, dirty hacker"})
+    assert response.status_code == 403
+
 
 @pytest.mark.django_db
-def test_events_put_api(api_client):
-    event = create_event()
+def test_only_the_author_of_an_event_can_replace_their_whole_event(api_client):
     pierre = create_user("pierre", "password")
+    event = create_event(pierre.profile)
     germany = create_country("Germany")
     berlin = create_city(germany, "Berlin")
     authenticate_as(api_client, "pierre", "password")
@@ -123,14 +154,37 @@ def test_events_put_api(api_client):
     assert response.data["title"] == "A new shiny title"
     assert response.data["location"] == "Boxi"
 
+    raoul = create_user("raoul", "password")
+    authenticate_as(api_client, "raoul", "password")
+    response = api_client.put(
+        f"/events/{event.pk}/",
+        {
+            "location": "Boxi",
+            "title": "Hacked!",
+            "author": pierre.profile.pk,
+            "start_date": timezone.now(),
+            "end_date": timezone.now(),
+            "city": berlin.pk,
+            "description": "A new shiny description",
+        },
+    )
+    assert response.status_code == 403
+
 
 @pytest.mark.django_db
-def test_events_delete_api(api_client):
-    event = create_event()
+def test_only_the_author_of_an_event_can_delete_it(api_client):
     pierre = create_user("pierre", "password")
+    event = create_event(pierre.profile)
     authenticate_as(api_client, "pierre", "password")
 
     response = api_client.delete(f"/events/{event.pk}/")
     assert response.status_code == 204
     response = api_client.get("/events/")
     assert response.data == []
+
+    event = create_event(pierre.profile)
+    raoul = create_user("raoul", "password")
+    authenticate_as(api_client, "raoul", "password")
+
+    response = api_client.delete(f"/events/{event.pk}/")
+    assert response.status_code == 403
