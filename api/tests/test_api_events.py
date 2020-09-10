@@ -2,25 +2,7 @@ import pytest
 from django.utils import timezone
 from pprint import pprint
 from api.models import Event
-from api.tests.helpers import create_city, create_user, create_country
-
-
-def create_event(profile=None):
-    if not profile:
-        profile = create_user("roger", "password").profile
-    france = create_country("France")
-    paris = create_city(france, "Paris")
-    event = Event.objects.create(
-        author=profile,
-        city=paris,
-        location="Under the Eiffer Tower",
-        start_date=timezone.now(),
-        end_date=timezone.now(),
-        title="Some weird title",
-        description="Some funny description",
-    )
-
-    return event
+from api.tests.helpers import create_city, create_user, create_country, create_event
 
 
 def authenticate_as(client, username, password):

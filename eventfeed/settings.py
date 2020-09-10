@@ -149,3 +149,5 @@ SWAGGER_SETTINGS = {
 
 # https://django-guardian.readthedocs.io/en/stable/configuration.html?highlight=ANONYMOUS_USER_NAME#anonymous-user-name
 ANONYMOUS_USER_NAME = None
+
+MINUTES_OF_VALIDITY_FOR_A_BEARER_TOKEN = 60 * 24

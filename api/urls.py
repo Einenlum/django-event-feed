@@ -1,10 +1,9 @@
 from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
-from .views import EventCollectionAPIView, EventResourceAPIView
+from .views import EventCollectionAPIView, EventResourceAPIView, ObtainAuthToken
 
 
 urlpatterns = [
-    path("auth/authenticate/", obtain_auth_token),
+    path("auth/authenticate/", ObtainAuthToken.as_view()),
     path(
         r"events/",
         EventCollectionAPIView.as_view(),
