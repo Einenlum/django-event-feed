@@ -1,7 +1,11 @@
 from django.urls import path
-from .views import event_collection, event_element
+from .views import EventCollectionAPIView, EventResourceAPIView
 
 urlpatterns = [
-    path(r"events/", event_collection),
-    path(r"events/<pk>/", event_element),
+    path(
+        r"events/",
+        EventCollectionAPIView.as_view(),
+        name="events_collection",
+    ),
+    path(r"events/<pk>/", EventResourceAPIView.as_view(), name="events_resource"),
 ]

@@ -75,7 +75,7 @@ def test_events_patch_api(api_client):
 
 
 @pytest.mark.django_db
-def test_events_existing_put_api(api_client):
+def test_events_put_api(api_client):
     event = create_event()
     pierre = create_user("pierre")
     germany = create_country("Germany")
@@ -96,30 +96,6 @@ def test_events_existing_put_api(api_client):
     assert response.status_code == 200
     assert response.data["title"] == "A new shiny title"
     assert response.data["location"] == "Boxi"
-
-
-@pytest.mark.django_db
-def test_events_not_existing_put_api(api_client):
-    pierre = create_user("pierre")
-    germany = create_country("Germany")
-    berlin = create_city(germany, "Berlin")
-
-    response = api_client.put(
-        f"/events/78/",
-        {
-            "location": "Boxi",
-            "title": "A new shiny title",
-            "author": pierre.profile.pk,
-            "start_date": timezone.now(),
-            "end_date": timezone.now(),
-            "city": berlin.pk,
-            "description": "A new shiny description",
-        },
-    )
-    assert response.status_code == 200
-    assert response.data["title"] == "A new shiny title"
-    assert response.data["location"] == "Boxi"
-    assert response.data["id"] == 78
 
 
 @pytest.mark.django_db
