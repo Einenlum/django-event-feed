@@ -35,13 +35,22 @@ class EventResourceAPIView(RetrieveUpdateDestroyAPIView):
         return super().get_serializer_class()
 
 
-@api_view(["POST"])
+@api_view(["POST", "DELETE"])
 def attend_an_event(request, pk):
     event = get_object_or_404(Event, pk=pk)
-    if request.user.profile in event.attendees.all():
-        raise ValidationError("You are already attending this event")
 
-    event.attendees.add(request.user.profile)
-    event.save()
+    if request.method == "POST":
+        if request.user.profile in event.attendees.all():
+            raise ValidationError("You are already attending this event")
+
+        event.attendees.add(request.user.profile)
+        event.save()
+
+        return redirect(event.get_absolute_url())
+
+    # DELETE
+    if request.user.profile in event.attendees.all():
+        event.attendees.remove(request.user.profile)
+        event.save()
 
     return redirect(event.get_absolute_url())

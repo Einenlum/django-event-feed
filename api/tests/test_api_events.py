@@ -195,3 +195,22 @@ def test_someone_cannot_attend_an_event_twice(api_client):
 
     response = api_client.post(f"/events/{event.pk}/attend/")
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_one_can_removes_themselves_from_an_event(api_client):
+    pierre = create_user("pierre", "password")
+    event = create_event(pierre.profile)
+    raoul = create_user("raoul", "password")
+    event.attendees.add(raoul.profile)
+    event.save()
+    authenticate_as(api_client, "raoul", "password")
+
+    event_detail_response = api_client.get(f"/events/{event.pk}/")
+    assert len(event_detail_response.data["attendees"]) == 2
+
+    response = api_client.delete(f"/events/{event.pk}/attend/")
+    assert response.status_code == 302
+
+    event_detail_response = api_client.get(f"/events/{event.pk}/")
+    assert len(event_detail_response.data["attendees"]) == 1
