@@ -11,6 +11,7 @@ djangorestframework = "^3.11.1"
 drf-yasg = "^1.17.1"
 django-guardian = "^2.3.0"
 django-environ = "^0.4.5"
+psycopg2 = "^2.8.6"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
