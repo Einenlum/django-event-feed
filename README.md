@@ -1,5 +1,7 @@
 # Django Event Feed
 
+You can see the API in action [here on Heroku](https://django-event-feed.herokuapp.com/doc/).
+
 A toy project to play with Django Rest Framework.
 Only the REST API is coded. No frontend.
 
