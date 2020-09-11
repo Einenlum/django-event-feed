@@ -168,3 +168,30 @@ def test_only_the_author_of_an_event_can_delete_it(api_client):
 
     response = api_client.delete(f"/events/{event.pk}/")
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_a_user_can_attend_an_event(api_client):
+    pierre = create_user("pierre", "password")
+    event = create_event(pierre.profile)
+    michel = create_user("michel", "password")
+    authenticate_as(api_client, "michel", "password")
+
+    event_detail_response = api_client.get(f"/events/{event.pk}/")
+    assert len(event_detail_response.data["attendees"]) == 1
+
+    join_response = api_client.post(f"/events/{event.pk}/attend/")
+    assert join_response.status_code == 302
+
+    event_detail_response = api_client.get(f"/events/{event.pk}/")
+    assert len(event_detail_response.data["attendees"]) == 2
+
+
+@pytest.mark.django_db
+def test_someone_cannot_attend_an_event_twice(api_client):
+    pierre = create_user("pierre", "password")
+    event = create_event(pierre.profile)
+    authenticate_as(api_client, "pierre", "password")
+
+    response = api_client.post(f"/events/{event.pk}/attend/")
+    assert response.status_code == 400

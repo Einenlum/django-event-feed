@@ -1,9 +1,12 @@
-from django.db import models
-from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
+from django.db import models
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.urls import reverse
 from guardian.shortcuts import assign_perm
+
 from eventfeed import settings
+
 from .custom_permissions import (
     EVENT_PERMISSION_DELETE_OWN_EVENT,
     EVENT_PERMISSION_EDIT_OWN_EVENT,
@@ -66,6 +69,9 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("events_resource", kwargs={"pk": self.pk})
 
 
 @receiver(

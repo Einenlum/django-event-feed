@@ -1,5 +1,8 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
+from django.shortcuts import get_object_or_404, redirect
 from ..models import Event
 from ..serializers import EventSerializer, CreateEventSerializer, EditEventSerializer
 from ..custom_permissions import EventObjectPermission
@@ -30,3 +33,15 @@ class EventResourceAPIView(RetrieveUpdateDestroyAPIView):
             return EditEventSerializer
 
         return super().get_serializer_class()
+
+
+@api_view(["POST"])
+def attend_an_event(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    if request.user.profile in event.attendees.all():
+        raise ValidationError("You are already attending this event")
+
+    event.attendees.add(request.user.profile)
+    event.save()
+
+    return redirect(event.get_absolute_url())
