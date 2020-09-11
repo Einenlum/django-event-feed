@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import environ
+import django_heroku
 
 env = environ.Env(DATABASE_PORT=(str, "5432"), DEBUG=(bool, False))
 
@@ -159,3 +160,5 @@ SWAGGER_SETTINGS = {
 ANONYMOUS_USER_NAME = None
 
 MINUTES_OF_VALIDITY_FOR_A_BEARER_TOKEN = 60 * 24
+
+django_heroku.settings(locals())
