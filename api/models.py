@@ -21,7 +21,9 @@ class Profile(models.Model):
 
 
 @receiver(post_save, sender=User, dispatch_uid="create_profile_on_user_creation")
-def create_profile_on_user_creation(sender, **kwargs):
+def create_profile_on_user_creation(sender, created, **kwargs):
+    if not created:
+        return
     user = kwargs.get("instance")
     profile = Profile(user=user)
     profile.save()
