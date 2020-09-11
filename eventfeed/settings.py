@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import environ
 
-env = environ.Env(DATABASE_PORT=(str, "5432"))
+env = environ.Env(DATABASE_PORT=(str, "5432"), DEBUG=(bool, False))
 
 if os.path.exists("./.env"):
     env.read_env(env.str("./", ".env"))
@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
