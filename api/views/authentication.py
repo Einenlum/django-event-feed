@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as BaseObtainAuthToken
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
+from rest_framework import status
 
 from ..serializers.authentication import CreateUserSerializer, UserSerializer
 
@@ -34,4 +35,4 @@ class ObtainAuthToken(BaseObtainAuthToken):
             pass
         token = Token.objects.create(user=user)
 
-        return Response({"token": token.key})
+        return Response({"token": token.key}, status=status.HTTP_201_CREATED)
