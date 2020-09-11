@@ -12,7 +12,7 @@ from rest_framework.generics import (
 )
 from django.http import HttpResponse
 from .models import Event
-from .serializers import EventSerializer, CreateEventSerializer
+from .serializers import EventSerializer, CreateEventSerializer, EditEventSerializer
 from .custom_permissions import EventObjectPermission
 
 
@@ -27,11 +27,20 @@ class EventCollectionAPIView(ListCreateAPIView):
 
         return super().get_serializer_class()
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user.profile)
+
 
 class EventResourceAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
     permission_classes = [IsAuthenticated, EventObjectPermission]
+
+    def get_serializer_class(self):
+        if self.request.method in ["PUT", "PATCH"]:
+            return EditEventSerializer
+
+        return super().get_serializer_class()
 
 
 class ObtainAuthToken(BaseObtainAuthToken):
