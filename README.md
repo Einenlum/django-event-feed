@@ -10,7 +10,11 @@ Registered users can also get the detail of an event and see who is attending it
 ## Stack
 
 * Django REST Framework
-* pytest
+* pytest + pytest-xdist (for parallel testing)
 * drf-yasg (to generate documentation)
 * django-guardian (to use object permissions)
 * black (opinonated linter)
+
+## Tests
+
+`pytest -n <number_of_cpus>`
