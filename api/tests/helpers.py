@@ -3,6 +3,14 @@ from django.utils import timezone
 from api.models import Country, City, Event
 
 
+def authenticate_as(client, username, password):
+    token = client.post(
+        "/auth/authenticate/", {"username": username, "password": password}
+    ).data["token"]
+
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+
 def create_user(username, password=None):
     return User.objects.create_user(username, password=password)
 

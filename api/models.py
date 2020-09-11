@@ -19,6 +19,9 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user)
 
+    def get_absolute_url(self):
+        return reverse("profiles_resource", kwargs={"pk": self.pk})
+
 
 @receiver(post_save, sender=User, dispatch_uid="create_profile_on_user_creation")
 def create_profile_on_user_creation(sender, created, **kwargs):

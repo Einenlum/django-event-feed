@@ -4,6 +4,7 @@ from drf_yasg import openapi
 from rest_framework import permissions
 from .views.events import EventCollectionAPIView, EventResourceAPIView, attend_an_event
 from .views.authentication import ObtainAuthToken
+from .views.profiles import ProfileView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -25,4 +26,5 @@ urlpatterns = [
     ),
     path(r"events/<pk>/attend/", attend_an_event, name="events_attend"),
     path(r"events/<pk>/", EventResourceAPIView.as_view(), name="events_resource"),
+    path(r"profiles/<pk>/", ProfileView.as_view(), name="profiles_resource"),
 ]

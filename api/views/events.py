@@ -4,12 +4,17 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect
 from ..models import Event
-from ..serializers import EventSerializer, CreateEventSerializer, EditEventSerializer
+from ..serializers import (
+    EventSerializer,
+    CreateEventSerializer,
+    EditEventSerializer,
+    CollectionEventSerializer,
+)
 from ..custom_permissions import EventObjectPermission
 
 
 class EventCollectionAPIView(ListCreateAPIView):
-    serializer_class = EventSerializer
+    serializer_class = CollectionEventSerializer
     queryset = Event.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
 

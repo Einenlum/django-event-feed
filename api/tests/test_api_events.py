@@ -2,15 +2,13 @@ import pytest
 from django.utils import timezone
 from pprint import pprint
 from api.models import Event
-from api.tests.helpers import create_city, create_user, create_country, create_event
-
-
-def authenticate_as(client, username, password):
-    token = client.post(
-        "/auth/authenticate/", {"username": username, "password": password}
-    ).data["token"]
-
-    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+from api.tests.helpers import (
+    create_city,
+    create_user,
+    create_country,
+    create_event,
+    authenticate_as,
+)
 
 
 @pytest.mark.django_db
@@ -27,7 +25,6 @@ def test_events_collection_api(api_client):
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]["title"] == event.title
-    assert response.data[0]["attendees"] == [1]
 
 
 @pytest.mark.django_db
@@ -51,12 +48,10 @@ def test_an_authenticated_user_can_create_an_event(api_client):
     )
     assert response.status_code == 201
 
-    # Get all collection again
-    response = api_client.get("/events/")
-    assert response.status_code == 200
-    assert len(response.data) == 1
-    assert response.data[0]["title"] == "Some title"
-    assert response.data[0]["attendees"] == [pierre.pk]
+    events = Event.objects.all()
+    assert len(events) == 1
+    assert events[0].title == "Some title"
+    assert pierre.profile in events[0].attendees.all()
 
 
 @pytest.mark.django_db
@@ -198,7 +193,7 @@ def test_someone_cannot_attend_an_event_twice(api_client):
 
 
 @pytest.mark.django_db
-def test_one_can_removes_themselves_from_an_event(api_client):
+def test_one_can_remove_themselves_from_an_event(api_client):
     pierre = create_user("pierre", "password")
     event = create_event(pierre.profile)
     raoul = create_user("raoul", "password")
