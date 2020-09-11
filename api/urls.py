@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import EventCollectionAPIView, EventResourceAPIView, ObtainAuthToken
+from .views.events import EventCollectionAPIView, EventResourceAPIView
+from .views.authentication import ObtainAuthToken
 
 
 urlpatterns = [
