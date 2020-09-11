@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect
 from ..models import Event
-from ..serializers import (
+from ..serializers.events import (
     EventSerializer,
     CreateEventSerializer,
     EditEventSerializer,

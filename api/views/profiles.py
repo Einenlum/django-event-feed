@@ -2,7 +2,7 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Profile
-from ..serializers import ProfileSerializer
+from ..serializers.profiles import ProfileSerializer
 
 
 class ProfileView(RetrieveAPIView):
