@@ -1,6 +1,21 @@
+from django.contrib.auth.models import User
+from drf_yasg.utils import get_serializer_class
 from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken as BaseObtainAuthToken
+from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
+
+from ..serializers.authentication import CreateUserSerializer, UserSerializer
+
+
+class RegisterUser(CreateAPIView):
+    model = User
+    serializer_class = CreateUserSerializer
+
+    def to_representation(self, instance):
+        serializer = UserSerializer(instance)
+
+        return serializer.data
 
 
 class ObtainAuthToken(BaseObtainAuthToken):
