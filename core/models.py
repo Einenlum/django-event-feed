@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
 from guardian.shortcuts import assign_perm
+from core.tasks import notify_author_that_a_new_profile_attends_their_event
 
 from eventfeed import settings
 
@@ -99,3 +100,17 @@ def set_permissions_to_author_of_events(sender, instance, created, **kwargs):
     event = instance
     assign_perm(EVENT_PERMISSION_EDIT_OWN_EVENT, event.author.user, event)
     assign_perm(EVENT_PERMISSION_DELETE_OWN_EVENT, event.author.user, event)
+
+
+@receiver(m2m_changed, sender=Event.attendees.through)
+def send_email_to_event_author_if_attendee_join(
+    sender, instance, action, pk_set, **kwargs
+):
+    if action != "post_add":
+        return
+
+    event = instance
+    new_attendees = [Profile.objects.get(pk=pk) for pk in pk_set]
+    for attendee in new_attendees:
+        if attendee != event.author:
+            notify_author_that_a_new_profile_attends_their_event(event, attendee)

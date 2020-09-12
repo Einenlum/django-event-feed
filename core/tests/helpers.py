@@ -1,17 +1,17 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
-from core.models import Country, City, Event
+from core.models import Country, City, Event, Profile
 
 
-def create_user(username, password=None):
-    return User.objects.create_user(username, password=password)
+def create_user(username, password=None, email=None):
+    return User.objects.create_user(username, email=email, password=password)
 
 
-def create_country(name):
+def create_country(name: str):
     return Country.objects.create(name=name)
 
 
-def create_city(country, name):
+def create_city(country: Country, name: str):
     return City.objects.create(country=country, name=name)
 
 
