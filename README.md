@@ -17,7 +17,18 @@ Registered users can also get the detail of an event and see who is attending it
 * django-guardian (to use object permissions)
 * black (opinonated linter)
 * Emails are sent through MailJet, thanks to [a custom EmailBackend](core/email_backends.py)
+* Email sending is asynchronous thanks to Celery
 
 ## Tests
 
-`pytest -n <number_of_cpus>`
+In one term:
+
+```bash
+make celery_test
+```
+
+In another one:
+
+```bash
+make test
+```

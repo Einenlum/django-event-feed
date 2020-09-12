@@ -1,12 +1,13 @@
 from django.core.mail import send_mail
 from django.conf import settings
+from celery import shared_task
+from core.models import Event, Profile
 
 
-def notify_author_that_a_new_profile_attends_their_event(
-    # We use strings here to avoid circular import
-    event: "core.models.Event",
-    attendee: "core.models.Profile",
-):
+@shared_task
+def notify_author_that_a_new_profile_attends_their_event(event_pk, attendee_pk):
+    event = Event.objects.get(pk=event_pk)
+    attendee = Profile.objects.get(pk=attendee_pk)
     author_email = event.author.user.email
     if not author_email:
         return

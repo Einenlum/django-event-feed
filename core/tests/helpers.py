@@ -1,6 +1,11 @@
+import os
+import pathlib
+import shutil
+import time
 from django.contrib.auth.models import User
 from django.utils import timezone
 from core.models import Country, City, Event, Profile
+from django.conf import settings
 
 
 def create_user(username, password=None, email=None):
@@ -31,3 +36,28 @@ def create_event(profile=None):
     )
 
     return event
+
+
+class WithEmails(object):
+    def __enter__(self):
+        if os.path.exists(settings.EMAIL_FILE_PATH):
+            shutil.rmtree(settings.EMAIL_FILE_PATH)
+        # we create the full dir if it does not exist
+        pathlib.Path(settings.EMAIL_FILE_PATH).mkdir(parents=True, exist_ok=True)
+
+        return settings.EMAIL_FILE_PATH
+
+    def __exit__(self, *args):
+        if os.path.exists(settings.EMAIL_FILE_PATH):
+            shutil.rmtree(settings.EMAIL_FILE_PATH)
+
+
+def try_until_seconds(seconds, func):
+    start = time.time()
+    max_end = time.time() + seconds
+
+    while time.time() < max_end:
+        if func():
+            return True
+
+    return False

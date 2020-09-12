@@ -4,7 +4,6 @@ from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
 from guardian.shortcuts import assign_perm
-from core.tasks import notify_author_that_a_new_profile_attends_their_event
 
 from eventfeed import settings
 
@@ -113,4 +112,9 @@ def send_email_to_event_author_if_attendee_join(
     new_attendees = [Profile.objects.get(pk=pk) for pk in pk_set]
     for attendee in new_attendees:
         if attendee != event.author:
-            notify_author_that_a_new_profile_attends_their_event(event, attendee)
+            # Imported only here, to avoid circular import
+            from core.tasks import notify_author_that_a_new_profile_attends_their_event
+
+            notify_author_that_a_new_profile_attends_their_event.delay(
+                event.pk, attendee.pk
+            )

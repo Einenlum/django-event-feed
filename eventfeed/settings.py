@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import environ
 import django_heroku
+import sys
+
+TESTING_MODE = "pytest" in sys.modules
 
 env = environ.Env(
     DATABASE_PORT=(str, "5432"),
@@ -173,5 +176,7 @@ MAILJET_API_SECRET = env("MAILJET_API_SECRET")
 
 EMAIL_BACKEND = "core.email_backends.MailJetBackend"
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 
 django_heroku.settings(locals())
