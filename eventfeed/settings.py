@@ -14,7 +14,12 @@ import os
 import environ
 import django_heroku
 
-env = environ.Env(DATABASE_PORT=(str, "5432"), DEBUG=(bool, False))
+env = environ.Env(
+    DATABASE_PORT=(str, "5432"),
+    DEBUG=(bool, False),
+    MAILJET_API_KEY=(str, ""),
+    MAILJET_API_SECRET=(str, ""),
+)
 
 if os.path.exists("./.env"):
     env.read_env(env.str("./", ".env"))
@@ -161,5 +166,10 @@ SWAGGER_SETTINGS = {
 ANONYMOUS_USER_NAME = None
 
 MINUTES_OF_VALIDITY_FOR_A_BEARER_TOKEN = 60 * 24
+
+MAILJET_API_KEY = env("MAILJET_API_KEY")
+MAILJET_API_SECRET = env("MAILJET_API_SECRET")
+
+EMAIL_BACKEND = "core.email_backends.MailJetBackend"
 
 django_heroku.settings(locals())
