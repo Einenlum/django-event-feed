@@ -19,6 +19,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     MAILJET_API_KEY=(str, ""),
     MAILJET_API_SECRET=(str, ""),
+    DEFAULT_FROM_EMAIL=(str, ""),
 )
 
 if os.path.exists("./.env"):
@@ -171,5 +172,6 @@ MAILJET_API_KEY = env("MAILJET_API_KEY")
 MAILJET_API_SECRET = env("MAILJET_API_SECRET")
 
 EMAIL_BACKEND = "core.email_backends.MailJetBackend"
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 
 django_heroku.settings(locals())
