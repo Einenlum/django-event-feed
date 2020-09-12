@@ -1,14 +1,9 @@
 import pytest
 from django.utils import timezone
 from pprint import pprint
-from api.models import Event
-from api.tests.helpers import (
-    create_city,
-    create_user,
-    create_country,
-    create_event,
-    authenticate_as,
-)
+from core.models import Event
+from core.tests.helpers import create_city, create_user, create_country, create_event
+from api.tests.helpers import authenticate_as
 
 
 @pytest.mark.django_db

@@ -2,7 +2,7 @@ import pytest
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.models import User
-from api.tests.helpers import create_event, create_user
+from core.tests.helpers import create_event, create_user
 from rest_framework.authtoken.models import Token
 
 

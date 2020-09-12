@@ -3,14 +3,14 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect
-from ..models import Event
+from core.models import Event
 from ..serializers.events import (
     EventSerializer,
     CreateEventSerializer,
     EditEventSerializer,
     CollectionEventSerializer,
 )
-from ..custom_permissions import EventObjectPermission
+from core.custom_permissions import EventObjectPermission
 
 
 class EventCollectionAPIView(ListCreateAPIView):

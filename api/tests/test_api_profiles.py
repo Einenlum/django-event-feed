@@ -1,5 +1,6 @@
 import pytest
-from api.tests.helpers import create_user, create_event, authenticate_as
+from api.tests.helpers import authenticate_as
+from core.tests.helpers import create_user, create_event
 
 
 @pytest.mark.django_db

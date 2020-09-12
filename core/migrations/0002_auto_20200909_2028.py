@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0001_initial'),
+        ("core", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='city',
-            options={'verbose_name_plural': 'cities'},
+            name="city",
+            options={"verbose_name_plural": "cities"},
         ),
         migrations.AlterModelOptions(
-            name='country',
-            options={'verbose_name_plural': 'countries'},
+            name="country",
+            options={"verbose_name_plural": "countries"},
         ),
     ]

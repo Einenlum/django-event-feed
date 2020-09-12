@@ -1,7 +1,7 @@
 import pytest
 from django.utils import timezone
-from api.models import Event
-from api.tests.helpers import create_country, create_city, create_user
+from core.models import Event
+from core.tests.helpers import create_country, create_city, create_user
 
 
 @pytest.mark.django_db
